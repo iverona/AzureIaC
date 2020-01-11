@@ -1,0 +1,86 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: yes
+  vars:
+    service_main_config_file: "config/{{ survey_service }}_config.yml"
+    git_config_file: "config/git_config.yml"
+
+  vars_files:
+  - "{{ service_main_config_file }}"
+  - "{{ git_config_file }}"
+
+
+  tasks: 
+  - name: Checking parameters
+    shell: echo "-- id " ; id ;
+           echo "-- pwd " ; pwd ;
+           ls -la ;
+           echo "-- HOME " ; echo $HOME ;
+           echo "-- ~.ssh" ; ls -la ~/.ssh ;
+           echo "-- dir config" ; ls -la config ;
+           echo "-- Git config" ; cat .git/config ;
+           echo "-- /var/lib/awx" ; ls -la /var/lib/awx ;
+           echo "-- /var/lib/awx/projects" ; ls -la /var/lib/awx/projects ;
+           echo "-- Git config list" ; git config --local --list ;
+           echo "-- Creating new empty Git config"; 
+           > .git/config ;
+           echo "-- Git config" ; cat .git/config ;
+
+  - name: Adding Git config
+    shell: git config --local --add {{ item.varName }} {{ item.varValue }}
+    with_items: "{{ git_config }}"
+
+  - name: Getting .git/config
+    shell: echo "-- Git config list" ; git config --local --list ;
+           echo "-- Git config" ; cat .git/config
+
+  ##########
+  # Modify #
+  ##########
+  - name: Before add the line, try to delete, to no duplicate it.
+    lineinfile:
+       path: "{{ service_main_config_file }}"
+       line: "service_config_var_listen_port: {{ service_config_var_listen_port }}"
+       state: absent
+
+  - name: Modifying port ** {{ survey_port }} ** to {{ survey_service }} service
+    lineinfile:
+       path: "{{ service_main_config_file }}"
+       line: "service_config_var_listen_port: {{ survey_port }}"
+       insertbefore: 'service_config_var_document_root.*'
+
+  - name: Checking {{ service_main_config_file }}
+    shell: echo "-- Checking {{ service_main_config_file }}" ;
+           cat {{ service_main_config_file }}
+
+  - name: Preparing environment after run the push
+    file:
+      state: directory
+      path: ~/.ssh
+      owner: awx
+      group: awx
+      mode: "0700"
+
+  - copy:
+      src: secrets/vault_k
+      dest: ~/.ssh/known_hosts
+      mode: "0644"
+      owner: awx
+      group: awx
+
+  - copy:
+      src: secrets/vault_i
+      dest: ~/.ssh/id_rsa
+      mode: "0600"
+      owner: awx
+      group: awx
+
+  - name: Repo sync
+    shell: echo "-- Checking ~/.ssh" ; ls -la ~/.ssh ;
+           echo "-- Checking ~/.ssh/known_hosts" ; cat ~/.ssh/known_hosts ;
+           echo "-- Checking ~/.ssh/id_rsa" ; cat ~/.ssh/id_rsa ;
+           echo "-- Commit to GIT" ;
+           git add --all . ;
+           git commit -m "Configuration change" ;
+           git push -f -u origin HEAD:master ; 

@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: Getting Resource Group Names
+    azure_rm_resourcegroup_facts:
+    register: aux
+
+  - debug:
+      msg: "{{ azure_resourcegroups }}"
+    when: azure_resourcegroups | length > 0
+
+  - name: Deleting Resource Group
+    azure_rm_resourcegroup:
+      name: "{{ item.name }}"
+      state: absent
+      force_delete_nonempty: yes
+    with_items: "{{ azure_resourcegroups }}"
+    when: azure_resourcegroups | length > 0

@@ -1,0 +1,42 @@
+---
+# Infra definition
+vm_name: nginx
+vm_flavor: Standard_DS1_v2
+
+# Azure
+az_environment: env_{{ vm_name }}
+az_resourcegroup_name: "rc_{{ az_environment }}"
+az_resourcegroup_location: "northeurope"
+az_virtual_networks:
+   - { name: "vnet_{{ az_environment }}", address_prefixes: "10.0.0.0/16" }
+az_subnets:
+   - { name: "subnet_{{ az_environment }}", vnet: "vnet_{{ az_environment }}", address_prefix: "10.0.1.0/24" }
+
+# Software repo config
+service_software_configure_repo: true
+service_software_repo_name: nginx
+service_software_repo_url: http://nginx.org/packages/mainline/centos/7/$basearch/
+
+# Service name string and service OS name
+service_name: nginx
+service_os_name: nginx
+
+# Software needed to install the service
+service_pkgs: ['nginx']
+
+# Config file vars. We need the template and the destination file
+service_config_main_file: /etc/nginx/nginx.conf
+
+service_config_files:
+   - { template: ./templates/nginx_template.conf.j2, config: /etc/nginx/nginx.conf }
+
+# Vars to configure the service 
+service_config_var_listen_port: 80
+service_config_var_document_root: /usr/share/nginx/html
+
+# Status on boot
+service_onboot: on
+
+# Service status after the deploy
+service_status: start
+...

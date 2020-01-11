@@ -1,0 +1,37 @@
+---
+- hosts: "srv_{{ survey_service }}"
+#- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    service_main_config_file: "../config/{{ survey_service }}_config.yml"
+
+  vars_files:
+  - "{{ service_main_config_file }}"
+
+  tasks:
+    - name: "Changing _ per ."
+      shell: echo {{ inventory_hostname }} | sed -s 's/\_/\./g'
+      register: aux
+
+    - debug:
+        msg: "**** {{ inventory_hostname }} - {{ aux.stdout }} **** "
+
+    - name: Creating Network Security Group that allows SSH and HTTP
+      azure_rm_securitygroup:
+        resource_group: "{{ az_resourcegroup_name }}"
+        name: "{{ az_resourcegroup_name }}_{{ aux.stdout }}_SecurityGroupSSH_HTTP"
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+          - name: HTTP
+            protocol: Tcp
+            destination_port_range: "{{ service_config_var_listen_port }}"
+            access: Allow
+            priority: 1002
+            direction: Inbound
+      delegate_to: localhost

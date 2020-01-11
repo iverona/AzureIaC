@@ -1,0 +1,42 @@
+---
+# Infra definition
+vm_name: apache
+vm_flavor: Standard_DS1_v2
+
+# Azure
+az_environment: env_{{ vm_name }}
+az_resourcegroup_name: "rc_{{ az_environment }}"
+az_resourcegroup_location: "westeurope"
+az_virtual_networks:
+   - { name: "vnet_{{ az_environment }}", address_prefixes: "10.0.0.0/16" }
+az_subnets:
+   - { name: "subnet_{{ az_environment }}", vnet: "vnet_{{ az_environment }}", address_prefix: "10.0.1.0/24" }
+
+# Software repo config
+service_software_configure_repo: false
+service_software_repo_name: dummy
+service_software_repo_url: http://dummy.skynet.com/
+
+# Service name string and service OS name
+service_name: apache
+service_os_name: httpd
+
+# Software needed to install the service
+service_pkgs: ['httpd', 'apr', 'apr-util', 'httpd-tools', 'mailcap']
+
+# Config file vars. We need the template and the destination file
+service_config_main_file: /etc/httpd/conf/httpd.conf
+
+service_config_files:
+   - { template: ./templates/apache_template.conf.j2, config: /etc/httpd/conf/httpd.conf }
+
+# Vars to configure the service 
+service_config_var_listen_port: 80
+service_config_var_document_root: /var/www/html
+
+# Service status after the deploy
+service_status: start
+
+# Status on boot
+service_onboot: on
+...

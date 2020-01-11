@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    service_main_config_file: "../config/{{ survey_service }}_config.yml"
+
+  vars_files:
+  - "{{ service_main_config_file }}"
+
+  tasks:
+  - name: Creating Subnets
+    azure_rm_subnet:
+      resource_group: "{{ az_resourcegroup_name }}"
+      name: "{{ item.name }}"
+      address_prefix: "{{ item.address_prefix }}"
+      virtual_network: "{{ item.vnet }}"
+    with_items: "{{ az_subnets }}"

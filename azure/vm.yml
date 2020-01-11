@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    service_main_config_file: "../config/{{ survey_service }}_config.yml"
+    vm_items: "0"
+    last_vm: ""
+
+
+  vars_files:
+  - "{{ service_main_config_file }}"
+
+  tasks:
+  - name: Getting the last vm
+    set_fact:
+      last_vm: "{{ groups['srv_apache'] | max }}"
+    when: survey_service == 'apache'
+    ignore_errors: yes
+
+  - set_fact:
+      last_vm: "{{ groups['srv_nginx'] | max }}"
+    when: survey_service == 'nginx'
+    ignore_errors: yes
+
+  - set_fact:
+      vm_items: "{{ last_vm.split('0')[-1] | int }}"
+    ignore_errors: yes
+
+  - debug:
+      msg: "Host {{ last_vm }} - {{ vm_items }}"
+
+  - include: vm_tasks.yml
+    with_sequence: start="{{ vm_items |int +1 }}" end="{{ vm_items |int + survey_vm_num |int }}" stride=1 format=%03d

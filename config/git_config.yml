@@ -1,0 +1,13 @@
+---
+git_config:
+   - { varName: "core.repositoryformatversion", varValue: "0" }
+   - { varName: "core.filemode", varValue: "true" }
+   - { varName: "core.bare", varValue: "false" }
+   - { varName: "core.logallrefupdates", varValue: "true" }
+   - { varName: "remote.origin.fetch", varValue: "+refs/heads/*:refs/remotes/origin/*" }
+   - { varName: "remote.origin.url", varValue: "git@github.com:MoyRivera/AzureIaC.git" }
+   - { varName: "branch.master.remote", varValue: "origin" }
+   - { varName: "branch.master.merge", varValue: "refs/heads/master" }
+   - { varName: "user.name", varValue: "MoyRivera" }
+   - { varName: "user.email", varValue: "moises.rivera.plaza@gmail.com" }
+...

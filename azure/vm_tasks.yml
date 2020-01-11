@@ -1,0 +1,59 @@
+---
+  - name: Creating Public IP
+    azure_rm_publicipaddress:
+      resource_group: "{{ az_resourcegroup_name }}"
+      allocation_method: Static
+      name: "{{ az_resourcegroup_name }}_{{ vm_name }}{{ item }}_publicIP"
+      domain_name: "{{ vm_name }}{{ item }}"
+    register: output_publicIp
+
+  - name: Dumping Public IP
+    debug:
+      msg: "Public IP {{ output_publicIp.state.ip_address }} - DNS Name {{ output_publicIp.state.dns_settings }}"
+
+  - name: Creating Network Security Group that allows SSH and HTTP
+    azure_rm_securitygroup:
+      resource_group: "{{ az_resourcegroup_name }}"
+      name: "{{ az_resourcegroup_name }}_{{ vm_name }}{{ item }}_SecurityGroupSSH_HTTP"
+      rules:
+        - name: SSH
+          protocol: Tcp
+          destination_port_range: 22
+          access: Allow
+          priority: 1001
+          direction: Inbound
+        - name: HTTP
+          protocol: Tcp
+          destination_port_range: "{{ service_config_var_listen_port }}"
+          access: Allow
+          priority: 1002
+          direction: Inbound
+
+  - name: Creating Virtual Network Interface Card
+    azure_rm_networkinterface:
+      resource_group: "{{ az_resourcegroup_name }}"
+      name: "{{ az_resourcegroup_name }}_{{ vm_name }}{{ item }}_NIC"
+      virtual_network: "{{ az_virtual_networks[0].name }}"
+      subnet: "{{ az_subnets[0].name }}"
+      public_ip_name: "{{ az_resourcegroup_name }}_{{ vm_name }}{{ item }}_publicIP"
+      security_group: "{{ az_resourcegroup_name }}_{{ vm_name }}{{ item }}_SecurityGroupSSH_HTTP"
+
+  - name: Creating the VM
+    azure_rm_virtualmachine:
+      resource_group: "{{ az_resourcegroup_name }}"
+      name: "{{ vm_name }}{{ item }}"
+      vm_size: "{{ vm_flavor }}"
+      admin_username: azureuser
+      ssh_password_enabled: false
+      ssh_public_keys:
+        - path: /home/azureuser/.ssh/authorized_keys
+          key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAoCQJIxd/IEjrF8gE6f7e+BO8JjmE13t7pNATEBT1+xk4F0kHXzGs5AAWfDoOaknO2yUMVxOIf1a5Hf+QmsnmR1n3RUTvpNinHHt1zJiJQp85OBnQjJh36PvsxymqMK8x/huY1XlgTxkugMgxSKqTiQcRSfAtDj2Up11XWy/DMl11V1YZuvxGYBbQzdlFwyxIWinJIpzqR5Nxq2ur8jteXMoBcIal0RnZRyqoDgM3aDthLnlOhUrNz2TOZn1E8CbpW8DiyNS8DvQsaOviG3Spv5NBLs8hYht0PpecPlrUt3FffwzY4ZPHP22Ln7BrKmk2hh4Ictyx3nd7oT3uUr95 azureuser@ip-172-31-65-140.ec2.internal"
+      network_interfaces: "{{ az_resourcegroup_name }}_{{ vm_name }}{{ item }}_NIC"
+      tags:
+        srv: "{{ service_name }}"
+      image:
+        offer: CentOS
+        publisher: OpenLogic
+        sku: '7.5'
+        version: latest
+

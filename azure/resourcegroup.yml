@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    service_main_config_file: "../config/{{ survey_service }}_config.yml"
+
+  vars_files:
+  - "{{ service_main_config_file }}"
+
+  tasks:
+  - name: Creating Resource Group {{ az_environment }}
+    azure_rm_resourcegroup:
+      name: "{{ az_resourcegroup_name }}"
+      location: "{{ az_resourcegroup_location }}"
