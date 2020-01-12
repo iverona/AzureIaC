@@ -5,7 +5,7 @@ git_config:
    - { varName: "core.bare", varValue: "false" }
    - { varName: "core.logallrefupdates", varValue: "true" }
    - { varName: "remote.origin.fetch", varValue: "+refs/heads/*:refs/remotes/origin/*" }
-   - { varName: "remote.origin.url", varValue: "git@github.com:MoyRivera/AzureIaC.git" }
+   - { varName: "remote.origin.url", varValue: "git@github.com:MoyRivera/RHForum2020.git" }
    - { varName: "branch.master.remote", varValue: "origin" }
    - { varName: "branch.master.merge", varValue: "refs/heads/master" }
    - { varName: "user.name", varValue: "MoyRivera" }
