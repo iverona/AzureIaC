@@ -31,7 +31,7 @@ service_config_files:
    - { template: ./templates/nginx_template.conf.j2, config: /etc/nginx/nginx.conf }
 
 # Vars to configure the service 
-service_config_var_listen_port: 80
+service_config_var_listen_port: 9000
 service_config_var_document_root: /usr/share/nginx/html
 
 # Status on boot
