@@ -31,7 +31,7 @@ service_config_files:
    - { template: ./templates/apache_template.conf.j2, config: /etc/httpd/conf/httpd.conf }
 
 # Vars to configure the service 
-service_config_var_listen_port: 8008
+service_config_var_listen_port: 80
 service_config_var_document_root: /var/www/html
 
 # Service status after the deploy
