@@ -1,7 +1,7 @@
 ---
 # Infra definition
 vm_name: apache
-vm_flavor: Standard_DS1_v2
+vm_flavor: Standard_F2s_v2
 
 # Azure
 az_environment: env_{{ vm_name }}
