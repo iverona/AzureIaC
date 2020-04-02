@@ -47,7 +47,7 @@
       ssh_password_enabled: false
       ssh_public_keys:
         - path: /home/azureuser/.ssh/authorized_keys
-          key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAoCQJIxd/IEjrF8gE6f7e+BO8JjmE13t7pNATEBT1+xk4F0kHXzGs5AAWfDoOaknO2yUMVxOIf1a5Hf+QmsnmR1n3RUTvpNinHHt1zJiJQp85OBnQjJh36PvsxymqMK8x/huY1XlgTxkugMgxSKqTiQcRSfAtDj2Up11XWy/DMl11V1YZuvxGYBbQzdlFwyxIWinJIpzqR5Nxq2ur8jteXMoBcIal0RnZRyqoDgM3aDthLnlOhUrNz2TOZn1E8CbpW8DiyNS8DvQsaOviG3Spv5NBLs8hYht0PpecPlrUt3FffwzY4ZPHP22Ln7BrKmk2hh4Ictyx3nd7oT3uUr95 azureuser@ip-172-31-65-140.ec2.internal"
+          key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDoQCk/EB2uZign7BtQlrZCM15yaksuscvaXKziLDEqE4HYjdGUkwVaYeni4qfU5X7+OmBwRijtCKUQaGexI9tq/0ivFTMwX6T+Qq43IEQifuWRRg9Ky9MRqSHLCAYedJ1dB+0reXsGDDE26crGIFxqahNkn1bGQ5RshJUd+OvhOg+vOSdCdQa4dAIVwcOJIPNT0EEAo3+/VmCiE7/m+uYuxkMVmrPfaEbr+NZYpRcJwwn1QdMBPBO9L/Ji3kWe4d7Qkgjq79RYKDOjSM+PSIjHOu6/OzqcVzcXAwtFTGwL/Vm+r4KFYoq4q9bPkdNYFYTHCOE3w474TXxBIaOLX+Rr test@test.com"
       network_interfaces: "{{ az_resourcegroup_name }}_{{ vm_name }}{{ item }}_NIC"
       tags:
         srv: "{{ service_name }}"
