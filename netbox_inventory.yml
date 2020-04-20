@@ -1,6 +1,6 @@
 plugin: netbox.netbox.nb_inventory
 
-api_endpoint: {{ API_ENDPOINT }}
+api_endpoint: "{{ API_ENDPOINT }}"
 validate_certs: False
 config_context: True
 group_by:
@@ -8,7 +8,7 @@ group_by:
   - sites
   - tags
   - platforms
-token: {{ TOKEN }}
+token: "{{ TOKEN }}"
 
 compose:
   device_id: id
