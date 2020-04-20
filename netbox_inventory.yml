@@ -1,0 +1,14 @@
+plugin: netbox.netbox.nb_inventory
+
+api_endpoint: {{ API_ENDPOINT }}
+validate_certs: False
+config_context: True
+group_by:
+  - device_roles
+  - sites
+  - tags
+  - platforms
+token: {{ TOKEN }}
+
+compose:
+  device_id: id
