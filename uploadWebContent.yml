@@ -11,7 +11,8 @@
   tasks:
   - name: "Coping Web Content to {{ service_name }}:{{ service_config_var_document_root }}"
     copy: src="webContent/{{ survey_service }}/" dest="{{ service_config_var_document_root }}" backup=yes
+    register: result
     failed_when:
-      - changed
+      - result.changed
       - ansible_check_mode
     
